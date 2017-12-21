@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录我的家庭 - 环境监测系统</title>
+    <link rel="icon" href="__RES__/common/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="__RES__/common/bootstrapv3.3.0.min.css">
+    <link rel="stylesheet" type="text/css" href="__RES__/login/slider.css">
+    <style>
+        body {
+            background: #333;
+            color: whitesmoke;
+            font-family: "Microsoft YaHei UI Light";
+        }
+
+        .box p {
+            font-size: 30px;
+            margin-top: 12%;
+            margin-bottom: 8%;
+        }
+
+        input {
+            letter-spacing: 0.3em;
+            font-weight: bold;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 2pc;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container box" style="text-align: center">
+    <p>登录我的家庭 - 环境监测</p>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="homeId" class="col-sm-2 control-label">设备编号</label>
+            <div class="col-sm-10 has-success has-feedback">
+                <input type="text" class="form-control" id="homeId" placeholder="设备二维码下方的编号（17位）" maxlength="17"
+                       autofocus
+                       autocomplete="off">
+                <span id="THomeId" class="glyphicon glyphicon-ok form-control-feedback sr-only"
+                      aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="homeName" class="col-sm-2 control-label">家的名字</label>
+            <div class="col-sm-10 has-success has-feedback">
+                <input type="text" class="form-control" id="homeName" placeholder="例:银河系最帅的小明的家（3-12位，验证后不可修改）"
+                       maxlength="16"
+                       autocomplete="off">
+                <span id="THomeName" class="glyphicon glyphicon-ok form-control-feedback sr-only"
+                      aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div class="checkbox">
+                    <label style="padding-left: 0">
+                        <span id="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <button type="button" id="login" onclick="jump()" class="btn btn-success">　登 录　</button>
+                <span id="tip" style="display: block;margin-top: 1pc;color: #00A2D4;font-size: 14px">新设备请务必先将设备联网，然后在此处登录，否则无法成功验证设备</span>
+            </div>
+        </div>
+    </form>
+</div>
+<footer>© 2017 家庭环境监测系统 Power by <a href="http://hpu.lifanko.cn">lifanko</a></footer>
+<script src="__RES__/common/jquery-2.1.1.min.js"></script>
+<script src="__RES__/login/login.js"></script>
+<script src="__RES__/login/slider.min.js"></script>
+<script>
+    $("#login").fadeOut(0);
+    $("#slider").slider({
+        callback: function (result) {
+            if (result) {
+                tip = $("#tip");
+
+                var idLength = document.getElementById("homeId").value.length;
+                var nameLength = document.getElementById("homeName").value.length;
+
+                checkLen(idLength, nameLength);
+
+                if (idLength == 17 && nameLength >= 3 && nameLength <= 12) {
+                    var url = "/monitor/check";
+                    $.post(url, {homeId: $("#homeId").val(), homeName: $("#homeName").val()}, function (data) {
+                        var login = $("#login");
+                        if (data == "null") {
+                            tip.text("找不到对应设备，请检查设备编号是否输入正确，检查设备是否已经联网");
+                            $("#slider").slider("restore");
+                            blink(3);
+                        } else if (data == "new") {
+                            tip.text("新设备已就绪，请务必牢记家的名字：" + $("#homeName").val() + '，忘记名字将无法再次登陆！');
+                            login.text("我已牢记");
+                            login.fadeIn(300);
+                        } else if (data == "success") {
+                            tip.text("");
+                            login.text("　登　录　");
+                            login.fadeIn(300);
+                        } else if (data == "unMatch") {
+                            tip.text("设备编号与家的名字不匹配");
+                            $("#slider").slider("restore");
+                            blink(3);
+                        }
+                    }).error(function () {
+                        tip.text("网络错误，请稍后重试");
+                        blink(3);
+                    });
+                } else {
+                    tip.text("'设备编号' 或 '家的名字' 长度不符合要求");
+                    $("#slider").slider("restore");
+                    blink(3);
+                }
+            }
+        }
+    });
+    function blink(n) {
+        for (var i = 0; i < n; i++) {
+            tip.fadeOut(100);
+            tip.fadeIn(100);
+        }
+    }
+    function checkLen(idLength, nameLength) {
+        var THomeId = $("#THomeId");
+        var THomeName = $("#THomeName");
+
+        if (idLength == 17) {
+            THomeId.removeClass('glyphicon-warning-sign sr-only');
+            THomeId.addClass('glyphicon-ok');
+        } else {
+            THomeId.removeClass('glyphicon-ok sr-only');
+            THomeId.addClass('glyphicon-warning-sign');
+        }
+        if (nameLength >= 3 && nameLength <= 12) {
+            THomeName.removeClass('glyphicon-warning-sign sr-only');
+            THomeName.addClass('glyphicon-ok');
+        } else {
+            THomeName.removeClass('glyphicon-ok sr-only');
+            THomeName.addClass('glyphicon-warning-sign');
+        }
+    }
+    function jump() {
+        if ($("#login").text() == "我已牢记") {
+            tip = $("#tip");
+            var url = "/monitor/link";
+            $.post(url, {homeId: $("#homeId").val(), homeName: $("#homeName").val()}, function (data) {
+                if (data == "success") {
+                    tip.text("连接设备成功，正在登录...");
+                    setTimeout(function () {
+                        window.location = '/monitor';
+                    }, 1500);
+                } else {
+                    tip.text("网络错误，请稍后重试");
+                }
+            }).error(function () {
+                tip.text("网络错误，请稍后重试");
+                blink(3);
+            });
+        } else {
+            tip.text("登录成功，正在跳转...");
+            setTimeout(function () {
+                window.location = '/monitor';
+            }, 1500)
+        }
+    }
+</script>
+</body>
+</html>

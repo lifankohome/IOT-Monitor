@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家庭环境监测系统 - lifankohome</title>
+    <link rel="icon" href="__RES__/common/favicon.ico">
+    <script src="__RES__/common/jquery-2.1.1.min.js"></script>
+    <script src="__RES__/monitor/highCharts.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow-y: auto;
+            font-family: Signika, 'Microsoft JhengHei Light';
+            background-image: linear-gradient(to top, #453a94 0%, #c0a3dd 24%, #e2c9cc 30%, #e7627d 46%, #b8235a 59%, #801357 71%, #3d1635 84%, #1c1a27 100%);
+        }
+
+        .download {
+            font-size: 16px;
+            color: whitesmoke;
+            margin-left: 1pc;
+            background-color: #00A2D4;
+            padding: 0 10px;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .download img {
+            position: absolute;
+            margin-top: -15pc;
+            margin-left: -8.1pc;
+            transition: all 0.5s 0s;
+            z-index: 1;
+        }
+
+        .download:hover {
+            cursor: pointer;
+            background-color: #333;
+        }
+
+        .download:hover img {
+            margin-top: 2.6pc;
+        }
+
+        .chart {
+            padding-top: 0.5pc;
+        }
+
+        #dataSource {
+            font-size: 13px;
+            margin-left: 1pc;
+        }
+
+        #login a {
+            float: right;
+            font-size: 14px;
+            color: whitesmoke;
+            line-height: 49px;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 96%;margin: 0 auto">
+    <h1 style="color: #ffad43">
+        家庭环境监测系统
+        <a class="download">APP下载<img src="__RES__/monitor/app.png" width="200px"></a>
+        <span id="dataSource">数据源：{$homeId}</span>
+        <span id="login">{$homeName}</span>
+    </h1>
+    <div id="containerTM" class="chart"></div>
+    <div id="containerHM" class="chart"></div>
+    <div id="containerSM" class="chart"></div>
+    <p style="font-size: 12px;color: #fff">&copy; Copyright lifanko 2017 December</p>
+</div>
+<script>
+    $('#containerTM').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: '气温曲线(60分钟)',
+            style: {
+                fontFamily: "Signika, 'Microsoft JhengHei Light'",
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: '#006cee'
+            }
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: {$timeMin}
+        },
+        yAxis: {
+            floor: -10,
+            ceiling: 50,
+            title: {
+                text: '温度 / ℃'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: '数字温度传感器（DS18B20）',
+            data: {$tempMin}
+        }],
+        credits: {
+            text: ''             // 显示的文字
+        }
+    });
+    $('#containerHM').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: '空气湿度曲线(60分钟)',
+            style: {
+                fontFamily: "Signika, 'Microsoft JhengHei Light'",
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: '#006cee'
+            }
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: {$timeMin}
+        },
+        yAxis: {
+            floor: -10,
+            ceiling: 50,
+            title: {
+                text: '湿度 / %'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: '数字温度传感器（DS18B20）',
+            data: {$humiMin}
+        }],
+        credits: {
+            text: ''             // 显示的文字
+        }
+    });
+    $('#containerSM').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: "空气质量指数(60分钟)",
+            useHTML: true,
+            style: {
+                fontFamily: "Signika, 'Microsoft JhengHei Light'",
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: '#006cee'
+            }
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            categories: {$timeMin}
+        },
+        yAxis: {
+            floor: 0,
+            ceiling: 500,
+            title: {
+                text: 'PM2.5空气质量指数 / 1'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: '国标AQI',
+            data: {$smogMinCN}
+        }, {
+            name: '美标AQI',
+            data: {$smogMinUS}
+        }, {
+            name: 'PM2.5浓度值（ug/m³）',
+            data: {$smogMin}
+        }],
+        credits: {
+            text: ''             // 显示的文字
+        }
+    });
+</script>
+</body>
+</html>
