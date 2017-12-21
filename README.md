@@ -4,7 +4,16 @@
 ### Demo
 http://hpu.lifanko.cn/monitor
 
+### Screenshot
 ![Screenshot](https://github.com/lifankohome/IOT-Monitor/blob/master/screenshot.png?raw=true)
+
+### Feature
+ + Sensors Combine Freely
+ + Upload One Data Every 2 Minutes
+ + Wifi Module Pull/Push On Power
+ + Android App Available
+ + MicroUSB Power Plugin
+ + Connect To Router Automatic
 
 ### WIFI Module
 ESP8266
