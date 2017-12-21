@@ -6,8 +6,6 @@ use think\Controller;
 use think\Cookie;
 use think\Request;
 
-//CREATE TABLE `lifanko`.`monitor_home` ( `id` INT NOT NULL AUTO_INCREMENT , `uid` VARCHAR(32) NOT NULL DEFAULT '00-00-00-00-00-00' , `name` VARCHAR(32) NOT NULL DEFAULT '家' , `time` VARCHAR(32) NOT NULL DEFAULT '0' , PRIMARY KEY (`id`)) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT = '家庭环境监测所有设备记录表';
-
 class Index extends Controller
 {
     public function index($home = '')
