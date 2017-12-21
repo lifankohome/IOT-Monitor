@@ -60,3 +60,5 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+server/debug.php
+
