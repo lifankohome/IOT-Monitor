@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="copyright" content="www.apicloud.com"/>
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            background: #f0f0f0;
+        }
+
+        input {
+            height: 50px;
+            line-height: 30px;
+            font-size: 18px;
+            color: #8E8C8C;
+            width: 80%;
+        }
+
+        input::-webkit-input-placeholder {
+            color: #ccc;
+        }
+
+        .account, .passwd {
+            background: #fff;
+        }
+
+        .passwd img, .account img {
+            vertical-align: top;
+        }
+
+        .item {
+            background-color: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .btn {
+            margin: 3px 20%;
+            color: #FFFFFF;
+        }
+
+        .btn {
+            background: #ff6836;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .btn button {
+            color: #fff;
+        }
+
+        .account img {
+            width: 30px;
+            height: 30px;
+            margin: 10px;
+        }
+
+        .passwd img {
+            width: 30px;
+            margin-top: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .login {
+            background-color: rgba(252, 85, 0, 0.6) !important;
+        }
+
+        input {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+<div style="height: 1pc"></div>
+<form>
+    <div class="item account"><img src="../image/login01.png"><input type="text" placeholder="设备编号（17位）" id="account">
+    </div>
+    <div class="item passwd"><img src="../image/login02.png"><input type="text" placeholder="家的名字（3-12位）" id="password">
+    </div>
+    <div id="loginBtn" class="btn" tapmode="login" onclick="login();">验 证</div>
+</form>
+<p id="tip" style="text-align: center;margin-top: 2pc;font-size: 14px;color: #D40">当前数据源：1420监测站</p>
+</body>
+<script type="text/javascript">
+    var tip = document.getElementById("tip");
+    apiready = function () {
+        var homeId = api.getPrefs({
+            sync: true,
+            key: 'homeId'
+        });
+        document.getElementById("account").value = homeId;	//账号提示
+
+        var homeName = api.getPrefs({
+            sync: true,
+            key: 'homeName'
+        });
+        if (homeName.length >= 3) {
+            tip.innerText = "当前数据源：" + homeName;
+        }
+    };
+
+    function login() {
+        var account = document.getElementById("account").value;
+        var password = document.getElementById("password").value;
+        var loginBtn = document.getElementById("loginBtn");
+
+        if (account.length == 17 && password.length >= 3 && password.length <= 12) {
+
+            api.showProgress({
+                style: 'default',
+                animationType: 'zoom',
+                title: '正在验证',
+                text: '请稍等…',
+                modal: false
+            });
+            api.ajax({
+                url: 'http://hpu.lifanko.cn/monitor/check',
+                method: 'post',
+                dataType: 'text',
+                data: {
+                    values: {
+                        homeId: account,
+                        homeName: password
+                    }
+                }
+            }, function (ret, err) {
+                if (ret) {
+                    if (ret == "unMatch") {
+                        tip.innerText = "设备编号与名字不匹配";
+                    } else if (ret == "success") {
+                        tip.innerText = "当前数据源：" + password;
+                        api.setPrefs({
+                            key: 'homeId',
+                            value: account
+                        });
+                        api.setPrefs({
+                            key: 'homeName',
+                            value: password
+                        });
+                        api.rebootApp();
+                    } else if (ret == "null") {
+                        tip.innerText = "无对应设备，请检查设备编号是否输入正确";
+                    } else {
+                        tip.innerText = "激活新设备仅可在PC端进行";
+                    }
+                } else {
+                    tip.innerText = "验证失败，请稍后再试";
+                }
+
+                api.hideProgress();
+            });
+        } else {
+            tip.innerText = "设备编号 或 家的名字 长度不符合要求";
+        }
+    }
+</script>
+</html>

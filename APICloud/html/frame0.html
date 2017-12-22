@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <style>
+        .empty {
+            text-align: center;
+            padding-top: 25%;
+            color: #F40;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body style="background-color: #f6f6f6">
+<div class="empty">
+    <img src="../image/loadFail.jpg" style="width: 70%"/>
+    <br><br><br>
+    <p>加载数据失败！请稍后重试…</p>
+</div>
+</body>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        var homeId = api.getPrefs({
+            sync: true,
+            key: 'homeId'
+        });
+
+        var obj = api.require('UIVividLine');
+        api.setRefreshHeaderInfo({
+            visible: true,
+            loadingImg: 'widget://image/refresh.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...',
+            showTime: true
+        }, function (ret, err) {
+            api.ajax({
+                url: 'http://hpu.lifanko.cn:81/interface.php?option=monitorT&homeId=' + homeId,
+                method: 'get'
+            }, function (ret, err) {
+                if (ret) {
+                    api.startPlay({
+                        path: 'widget://res/tip.wav'
+                    }, function (ret, err) {
+                    });
+
+                    api.refreshHeaderLoadDone();
+
+                    max = Math.ceil(ret[45]["max"]) + 1;
+                    min = Math.floor(ret[45]["min"]) - 1;
+
+                    obj.open({
+                        rect: {
+                            x: 0,
+                            y: 1,
+                            w: api.winWidth,
+                            h: api.frameHeight
+                        },
+                        styles: {
+                            bg: 'rgba(242,242,242,1)',
+                            xAxisGap: 40,
+                            yAxis: {
+                                max: max,
+                                min: min,
+                                step: 0.2,
+                                width: 25,
+                                color: '#000',
+                                size: 12
+                            },
+                            xAxis: {
+                                color: '#b00',
+                                size: 12,
+                                height: 25
+                            },
+                            coordinate: {
+                                horizontal: {
+                                    color: '#faa',
+                                    width: 0.5,
+                                    style: 'solid'
+                                },
+                                vertical: {
+                                    color: '#faa',
+                                    width: 0.5,
+                                    style: 'solid'
+                                }
+                            },
+                            line: {
+                                color: '#b00',
+                                width: 1
+                            },
+                            node: {
+                                size: 3,
+                                color: '#b00',
+                                hollow: false
+                            }
+                        },
+                        fixedOn: api.frameName,
+                        fixed: true,
+                        datas: ret
+                    }, function (ret) {
+
+                    });
+                } else {
+                    api.refreshHeaderLoadDone();
+                }
+            });
+        });
+
+        api.refreshHeaderLoading();
+    }
+</script>
+</html>

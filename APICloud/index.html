@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>底部导航</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/style.css"/>
+    <style>
+        header {
+            background-color: #f2f2f2;
+            border-bottom: #900 solid 1px;
+        }
+
+        header ul li {
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            display: none;
+            color: #323237;
+            position: relative;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        header ul li:nth-child(1).active {
+            display: block;
+            color: #d20;
+        }
+
+        header ul li:nth-child(2).active {
+            display: block;
+            color: #0d2;
+        }
+
+        header ul li:nth-child(3).active {
+            display: block;
+            color: #20d;
+        }
+
+        header ul li:nth-child(4).active {
+            display: block;
+            color: #20d;
+        }
+
+        header ul li:nth-child(5).active {
+            display: block;
+            color: #000;
+        }
+
+        #footer {
+            background-color: #f2f2f2;
+            border-top: #b00 solid 1px;
+        }
+
+        #footer ul li {
+            margin-top: 3px;
+            padding-top: 33px;
+            padding-bottom: 4px;
+            background: url() no-repeat center 2px;
+            background-size: auto 30px;
+            text-align: center;
+        }
+
+        #footer ul li:nth-child(1).active {
+            color: #b00;
+        }
+
+        #footer ul li:nth-child(2).active {
+            color: #0b0;
+        }
+
+        #footer ul li:nth-child(3).active {
+            color: #00b;
+        }
+
+        #footer ul li:nth-child(4).active {
+            color: #00b;
+        }
+
+        #footer ul li:nth-child(5).active {
+            color: #000;
+        }
+
+        #footer ul li:nth-child(1) {
+            background-image: url(./image/90.png);
+        }
+
+        #footer ul li:nth-child(2) {
+            background-image: url(./image/36.png);
+        }
+
+        #footer ul li:nth-child(3) {
+            background-image: url(./image/30.png);
+        }
+
+        #footer ul li:nth-child(4) {
+            background-image: url(./image/temperature.png);
+        }
+
+        #footer ul li:nth-child(5) {
+            background-image: url(./image/about.png);
+        }
+
+        #footer ul li:nth-child(1).active {
+            background-image: url(./image/900.png);
+        }
+
+        #footer ul li:nth-child(2).active {
+            background-image: url(./image/360.png);
+        }
+
+        #footer ul li:nth-child(3).active {
+            background-image: url(./image/300.png);
+        }
+
+        #footer ul li:nth-child(4).active {
+            background-image: url(./image/temperature0.png);
+        }
+
+        #footer ul li:nth-child(5).active {
+            background-image: url(./image/about0.png);
+        }
+    </style>
+</head>
+<body>
+<div id="wrap" class="flex-wrap flex-vertical">
+    <header>
+        <ul>
+            <li class="active">气温曲线(℃)</li>
+            <li>空气湿度记录(％)</li>
+            <li>气体质量记录(μg/m³)</li>
+            <li>空气质量指数</li>
+            <li>家庭环境检测系统</li>
+        </ul>
+    </header>
+    <div id="main" class="flex-con"></div>
+    <div id="footer">
+        <ul class="flex-wrap">
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con active">温度</li>
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con">湿度</li>
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con">颗粒</li>
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con">AQI</li>
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con">关于</li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+        $api.fixStatusBar($api.dom('header'));
+        api.setStatusBarStyle({
+            style: 'dark',
+            color: '#6ab494'
+        });
+        funIniGroup();
+        exitApp();//双击返回退出
+    };
+
+    function funIniGroup() {
+        var eHeaderLis = $api.domAll('header li'),
+                frames = [];
+        for (var i = 0, len = eHeaderLis.length; i < len; i++) {
+            if (i != 4) {
+                frames.push({
+                    name: 'frame' + i,
+                    url: './html/frame' + i + '.html',
+                    bgColor: 'rgba(0,0,0,.2)',
+                    bounces: true
+                })
+            } else {
+                frames.push({
+                    name: 'frame' + i,
+                    url: './html/frame' + i + '.html',
+                    bgColor: 'rgba(0,0,0,.2)',
+                    bounces: false
+                })
+            }
+        }
+        api.openFrameGroup({
+            name: 'group',
+            scrollEnabled: false,
+            rect: {
+                x: 0,
+                y: $api.dom('header').offsetHeight,
+                w: api.winWidth,
+                h: $api.dom('#main').offsetHeight
+            },
+            index: 0,
+            frames: frames,
+            preload: 4 	//预加载全部页面
+        }, function (ret, err) {
+
+        });
+    }
+
+    // 随意切换按钮
+    function randomSwitchBtn(tag) {
+        if (tag == $api.dom('#footer li.active'))return;
+        var eFootLis = $api.domAll('#footer li'),
+                eHeaderLis = $api.domAll('header li'),
+                index = 0;
+        for (var i = 0, len = eFootLis.length; i < len; i++) {
+            if (tag == eFootLis[i]) {
+                index = i;
+            } else {
+                $api.removeCls(eFootLis[i], 'active');
+                $api.removeCls(eHeaderLis[i], 'active');
+            }
+        }
+        $api.addCls(eFootLis[index], 'active');
+        $api.addCls(eHeaderLis[index], 'active');
+        api.setFrameGroupIndex({
+            name: 'group',
+            index: index
+        });
+    }
+    function exitApp() {
+        api.addEventListener({
+            name: 'keyback'
+        }, function (ret, err) {
+            api.toast({
+                msg: '再次轻按返回键退出',
+                duration: 1000,
+                location: 'bottom'
+            });
+
+            api.addEventListener({
+                name: 'keyback'
+            }, function (ret, err) {
+                api.closeWidget({
+                    id: 'A6939632758208',     //应用ID
+                    retData: {name: 'closeWidget'},
+                    silent: true
+                });
+            });
+
+            setTimeout(function () {
+                exitApp();
+            }, 1000)
+        });
+    }
+</script>
+</body>
+</html>
