@@ -15,20 +15,17 @@ http://hpu.lifanko.cn/monitor
  + MicroUSB Power Plugin
  + Connect To Router Automatic
 
-### WIFI Module
-ESP8266
-
-### MCU
-STC12C5A60S2 32MHz
-
-### Temperature Sensor
-DS18B20
-
-### humility Sensor
-DHT11
-
-### PM2.5 Sensor
-益杉A4-CG
+### Hardware
+ > ##### WIFI Module
+ > ESP8266
+ > ##### MCU
+ > STC12C5A60S2 32MHz
+ > ##### Temperature Sensor
+ > DS18B20
+ > ##### Humility Sensor
+ > DHT11
+ > ##### PM2.5 Sensor
+ > 益杉A4-CG
 
 ### Database
 MYSQL database: lifanko
