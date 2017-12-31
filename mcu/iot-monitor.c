@@ -5,13 +5,15 @@
 #define S2TI  0x02
 #define S2RI  0x01
 
-sbit relay = P2^6;
+sbit relay = P2^5;
+sbit linkled = P0^3;
+sbit key = P3^2;
 
-#define PIN_18B20 P24  //DS18B20通信引脚
-#define DHT P21		//湿度传感器引脚
+#define PIN_18B20 P27  //DS18B20通信引脚
+#define DHT P26		//湿度传感器引脚
 
 code uchar cmdIP[] = "AT+CIFSR\r\n";
-code uchar cmdAiLink[] = "AT+CWSMARTSTART=0\r\n";	//AiLink
+code uchar cmdAiLink[] = "AT+CWSMARTSTART=2\r\n";	//AiLink
 code uchar cmdMac[] = "AT+CIPSTAMAC?\r\n";	//获取MAC
 code uchar cmdRunMode[] = "AT+CWMODE_DEF=1\r\n";	//Station模式
 code uchar cmdConMode[] = "AT+CIPMUX=0\r\n";	//单连接模式
@@ -60,12 +62,38 @@ void main(){
 	UartInit();
 	Uart2Init();
 	Timer0Init();
+	EA = 1;
+
 	delayMs(20);
+
+	if(key){
+		linkled = 0;
+	}else{
+		smartLink();
+
+		linkled = 0;
+		delayMs(5);//延时0.5S
+		linkled = 1;
+		delayMs(5);//延时0.5S
+		linkled = 0;
+		delayMs(5);//延时0.5S
+		linkled = 1;
+		delayMs(5);//延时0.5S
+		linkled = 0;
+		delayMs(5);//延时0.5S
+		linkled = 1;
+		delayMs(5);//延时0.5S
+		linkled = 0;
+	}
+
 	Start18B20();
+
 	while(!connected){
 		sendAll(cmdIP);
 		delayMs(20);delayMs(20);//延时4S，开机获取IP
 	}
+	linkled = 1;
+
 	getMac();	//获取MAC
 	sendAll(cmdRunMode);//发送命令
 	delayMs(10);//延时1S
@@ -82,6 +110,7 @@ void main(){
         delayMs(20);delayMs(20);delayMs(20);delayMs(20);delayMs(20); //延时10s
         delayMs(20);delayMs(20);delayMs(20);delayMs(20);             //延时7s
 		if(connected){
+			linkled = 1;
 			failT++;
 			restart++;
 			if(failT > 5 || restart > 720){	//5次查询未接收到字符重启
@@ -93,6 +122,8 @@ void main(){
 				delayMs(20);
 				relay = 1;
 			}
+		}else{
+			linkled = 0;
 		}
 		while(!connected){
 			delayMs(20);//延时2S，开机获取IP
@@ -166,9 +197,9 @@ uchar dht11(){
 	return dhtData;
 }
 void smartLink(){	//启动智能连接
-	connected = 0;
-	delayMs(5);//延时0.5S
+	delayMs(5);
 	sendAll(cmdAiLink);//发送命令，此时会断开已有连接
+	delayMs(5);
 }
 void getData(){		//模块查询数据
 	uchar n = 0;
@@ -384,7 +415,6 @@ void UartInit(void){		//4800bps@32.0000MHz
 	TH1 = 0x30;		//设定定时器重装值
 	ET1 = 0;		//禁止定时器1中断
 	TR1 = 1;		//启动定时器1
-	EA = 1;
 	ES = 1;
 }
 void USART() interrupt 4{
