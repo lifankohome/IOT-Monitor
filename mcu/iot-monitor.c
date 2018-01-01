@@ -14,6 +14,7 @@ sbit key = P3^2;
 
 code uchar cmdIP[] = "AT+CIFSR\r\n";
 code uchar cmdAiLink[] = "AT+CWSMARTSTART=2\r\n";	//AiLink
+code uchar cmdRelease[] = "AT+CWSTOPSMART\r\n";	//释放内存
 code uchar cmdMac[] = "AT+CIPSTAMAC?\r\n";	//获取MAC
 code uchar cmdRunMode[] = "AT+CWMODE_DEF=1\r\n";	//Station模式
 code uchar cmdConMode[] = "AT+CIPMUX=0\r\n";	//单连接模式
@@ -29,9 +30,9 @@ uchar posString = 0, lenString = 0, A4Pos = 0;
 bit sendFlag = 0, connected = 0;  //发送完毕标识符，已连接标识符
 uchar msgT = 0, failT = 0;
 
-unsigned int restart = 0;
-
 unsigned int total = 0;	   //颗粒物浓度
+
+uchar today = 0;
 
 void UartInit(void);
 void Uart2Init(void);
@@ -71,26 +72,30 @@ void main(){
 	}else{
 		smartLink();
 
-		linkled = 0;
-		delayMs(5);//延时0.5S
-		linkled = 1;
-		delayMs(5);//延时0.5S
-		linkled = 0;
-		delayMs(5);//延时0.5S
-		linkled = 1;
-		delayMs(5);//延时0.5S
-		linkled = 0;
-		delayMs(5);//延时0.5S
-		linkled = 1;
-		delayMs(5);//延时0.5S
-		linkled = 0;
+		while(!connected){
+			linkled = 0;
+			delayMs(5);//延时0.5S
+			linkled = 1;
+			delayMs(5);//延时0.5S
+			linkled = 0;
+			delayMs(5);//延时0.5S
+			linkled = 1;
+			delayMs(5);//延时0.5S
+			linkled = 0;
+			delayMs(5);//延时0.5S
+			linkled = 1;
+			delayMs(5);//延时0.5S
+		}
+
+		sendAll(cmdRelease);//发送命令
+		delayMs(10);//延时1S
 	}
 
 	Start18B20();
 
 	while(!connected){
 		sendAll(cmdIP);
-		delayMs(20);delayMs(20);//延时4S，开机获取IP
+		delayMs(20);delayMs(20);delayMs(20);delayMs(20);delayMs(20);//延时10S，开机获取IP
 	}
 	linkled = 1;
 
@@ -109,14 +114,14 @@ void main(){
         delayMs(20);delayMs(20);delayMs(20);delayMs(20);delayMs(20); //延时10s
         delayMs(20);delayMs(20);delayMs(20);delayMs(20);delayMs(20); //延时10s
         delayMs(20);delayMs(20);delayMs(20);delayMs(20);             //延时7s
+
 		if(connected){
 			linkled = 1;
 			failT++;
-			restart++;
-			if(failT > 5 || restart > 720){	//5次查询未接收到字符重启
+
+			if(failT > 3){	//3次查询失败则重启
 				connected = 0;	//改变连接状态
 				failT = 0;
-				restart = 0;
 
 				relay = 0;
 				delayMs(20);
@@ -288,8 +293,8 @@ void getData(){		//模块查询数据
 	sendAll(cmdTCPURL);//发送命令
 	delayMs(10);//延时1S
 
-	if(lenString>10){
-		failT = 0;		//收到超过10个字符的信息就将失败次数置零
+	if(lenString>15){
+		failT = 0;		//收到超过15个字符的信息就将失败次数置零
 		lenString = 0;
 	}
 
@@ -366,6 +371,8 @@ void checkStr(){	//检查是否连接网络成功，检查收到的字符数目
 							if(String[i+4]=='I'){
 								if(String[i+5]=='P'){
 									connected = 1;	//连接网络成功
+
+									break;
 								}
 							}
 						}
@@ -377,6 +384,33 @@ void checkStr(){	//检查是否连接网络成功，检查收到的字符数目
 				connected = 0;	//+CIFSR:STAIP,"0.0.0.0"
 			}else if(lenString>80){
 				connected = 1;	//+CIFSR:STAIP,"192.168.0.110"
+			}
+		}
+	}else if(lenString>180){
+		for(i=100;i<lenString;i++){
+			if(String[i]=='D'){
+				if(String[i+1]=='a'){
+					if(String[i+2]=='t'){
+						if(String[i+3]=='e'){
+							if(String[i+4]==':'){
+								if(today == 0){
+									today = String[i+12];	//开机后同步今天的日期
+								}else if(today != String[i+12]){	//如果服务器日期和已有的日期不同则说明跨天，也就是晚上12点，此时进行系统重启
+									today = String[i+12];	//保存当前日期
+
+									connected = 0;	//改变连接状态
+									failT = 0;		//重置失败次数（无必要）
+
+									relay = 0;
+									delayMs(20);
+									relay = 1;
+								}
+
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
