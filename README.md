@@ -6,6 +6,7 @@ http://hpu.lifanko.cn/monitor
 
 ### Android APP
 
+http://7y9g1c.com1.z0.glb.clouddn.com/2fbd4ca10f428afcaa0c7426ce404271_d Version-0.1.9.5
 http://cdn.lifanko.cn/1130290a1741a89f34e935dbf2a2f623.apk Version-0.1.9
 
 ### Screenshot
@@ -61,3 +62,6 @@ ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT = '家庭环�
 
 ### Server
 Windows Server 2008 IIS
+
+### PCB
+![PCB](https://github.com/lifankohome/IOT-Monitor/blob/master/pcb.jpg?raw=true)
