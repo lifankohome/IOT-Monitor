@@ -93,8 +93,18 @@ ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT = '家庭环�
 ##### 更换步骤：
  + 移除PCB上的跳线帽，使用USB转串口工具连接最左边两个排针
  + 打开电脑串口工具选择波特率为115200bps
- + 发送AT指令修改WiFi波特率为4800bps；修改工作模式为STATION模式；查询MAC地址并记录
+ + 发送AT指令修改WiFi波特率为4800bps
+ + 修改工作模式为STATION模式
+ + 查询MAC地址并记录
  + 移除USB转串口，连接跳线帽
- + 重新配置联网
+ + 配置联网
+ + 用新的mac重新配置&登录设备
  
-**详细AT指令请参考：http://hpu.lifanko.cn/monitor/help**
+#### AT指令
+每条AT指令后应追加换行（结束符），否则会返回发送内容。
+
+```
+AT+UART_DEF=4800,8,1,0,0
+AT+CWMODE_DEF=1
+AT+CIPSTAMAC?
+```
