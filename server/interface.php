@@ -35,7 +35,7 @@ if (!empty($_GET['option'])) {
             $sql = "SELECT temp,time FROM $tableName WHERE uid='{$uid}' ORDER BY id DESC limit 45";
             foreach ($pdo->query($sql) as $row) {
                 $buffer['mark'] = date('H:i', $row['time']);
-                $buffer['value'] = $row['temp'];
+                $buffer['value'] = $row['temp'] - 4.1;
 
                 if ($min > $buffer['value']) {
                     $min = $buffer['value'];
@@ -148,10 +148,10 @@ if (!empty($_GET['option'])) {
 
             break;
         default:
-            echo "当前时间：" . date('Y年m月d日 H:i', time()) . " 河南理工大学1420监测站";
+            echo "当前时间：" . date('Y年m月d日 H:i', time()) . " 家庭环境检测系统";
     }
 } else {
-    echo "当前时间：" . date('Y年m月d日 H:i', time()) . " 河南理工大学1420监测站";
+    echo "当前时间：" . date('Y年m月d日 H:i', time()) . " 家庭环境检测系统";
 }
 
 /**
