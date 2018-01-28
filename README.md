@@ -41,9 +41,9 @@ table monitor
 CREATE TABLE `lifanko`.`monitor`
 ( `id` INT NOT NULL AUTO_INCREMENT ,
 `uid` VARCHAR(32) NOT NULL DEFAULT '00-00-00-00-00-00' ,
-`temp` VARCHAR(8) NOT NULL DEFAULT '0.0' ,
-`humi` VARCHAR(8) NOT NULL DEFAULT '0' ,
-`smog` VARCHAR(8) NOT NULL DEFAULT '0' ,
+`temp` DECIMAL(3,1) NOT NULL DEFAULT '0.0' ,
+`humi` int(2) NOT NULL DEFAULT '0' ,
+`smog` int(4) NOT NULL DEFAULT '0' ,
 `time` VARCHAR(16) NOT NULL DEFAULT '0' ,
 PRIMARY KEY (`id`))
 ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT = '家庭环境监测分钟记录表';
@@ -56,7 +56,7 @@ CREATE TABLE `lifanko`.`monitor_home`
 `uid` VARCHAR(32) NOT NULL DEFAULT '00-00-00-00-00-00' ,
 `name` VARCHAR(32) NOT NULL DEFAULT '家' ,
 `time` VARCHAR(32) NOT NULL DEFAULT '0' ,
-PRIMARY KEY (`id`))
+PRIMARY KEY (`id`，`uid`))
 ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT = '家庭环境监测所有设备记录表';
 ```
 
