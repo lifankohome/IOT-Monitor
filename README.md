@@ -56,7 +56,7 @@ CREATE TABLE `lifanko`.`monitor_home`
 `uid` VARCHAR(17) NOT NULL DEFAULT '00-00-00-00-00-00' ,
 `name` VARCHAR(32) NOT NULL DEFAULT '家' ,
 `time` VARCHAR(16) NOT NULL DEFAULT '0' ,
-PRIMARY KEY (`id`，`uid`))
+PRIMARY KEY (`id`))
 ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT = '家庭环境监测所有设备记录表';
 ```
 

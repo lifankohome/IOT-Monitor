@@ -22,7 +22,7 @@ class Index extends Controller
 
         $arrayTemp = $arrayHumi = $arraySmog = $arraySmogCN = $arraySmogUS = $arrayTime = array();
         foreach ($dataMin as $record) {
-            array_push($arrayTemp, round($record['temp'], 1));
+            array_push($arrayTemp, round($record['temp'] - 4.1, 1));    //温度修正
             array_push($arrayHumi, round($record['humi']));
             array_push($arraySmog, round($record['smog']));
             array_push($arraySmogCN, self::AQI_CN($record['smog']));
