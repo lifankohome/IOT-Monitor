@@ -54,8 +54,8 @@
 
                     api.refreshHeaderLoadDone();
 
-                    max = Math.ceil(ret[45]["max"]) + 30;
-                    min = Math.floor(ret[45]["min"]) - 30;
+                    max = Math.ceil(ret[ret.length-1]["max"]) + 30;
+                    min = Math.floor(ret[ret.length-1]["min"]) - 30;
                     if (min < 0) min = 0;
 
                     obj.open({
