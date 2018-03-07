@@ -82,6 +82,7 @@ ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT = '家庭环�
  
 #### 设备固件更新
  + monitor-v1.0.hex 12.075Kb 2018/01/01 - http://cdn.lifanko.cn/monitor-v1.0.hex
+ + monitor-v1.1.hex 12.071Kb 2018/03/07 - http://cdn.lifanko.cn/monitor-v1.1.hex
 ##### 如何进行固件更新：
  + 移除PCB上的跳线帽和WiFi模块，使用USB转串口工具连接最第三纵排两个排针
  + 使用STC-ISP软件加载固件并点击‘立即下载’
