@@ -19,8 +19,8 @@ code uchar cmdMac[] = "AT+CIPSTAMAC?\r\n";	//获取MAC
 code uchar cmdRunMode[] = "AT+CWMODE_DEF=1\r\n";	//Station模式
 code uchar cmdConMode[] = "AT+CIPMUX=0\r\n";	//单连接模式
 code uchar cmdTCP[] = "AT+CIPSTART=\"TCP\",\"hpu.lifanko.cn\",81\r\n";	//建立TCP连接
-code uchar cmdTCPLen[] = "AT+CIPSEND=100\r\n";	//TCP请求长度
-uchar cmdTCPURL[] = "GET /bingo.php?opt=mon&mac=00-00-00-00-00-00&T=00.0&S=0000&H=00 HTTP/1.1\r\n Host: eeec.hpu.edu.cn\r\n\r\n";	//发起请求
+code uchar cmdTCPLen[] = "AT+CIPSEND=99\r\n";	//TCP请求长度
+uchar cmdTCPURL[] = "GET /bingo.php?opt=mon&mac=00-00-00-00-00-00&T=00.0&S=0000&H=00 HTTP/1.1\r\n Host: hpu.lifanko.cn\r\n\r\n";	//发起请求
 
 uchar A4[16] = {0};
 uchar A4D0 = 0,A4D1 = 0;
